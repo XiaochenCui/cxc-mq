@@ -32,5 +32,6 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3 :: Only',
     ],
-    packages=find_packages(),
+    install_requires=['pika'],
+    packages=find_packages(exclude=['test']),
 )

@@ -1,22 +1,27 @@
 import pika
 import logging
 import threading
-from django.conf import settings
+import configparser
 
 logger = logging.getLogger(__name__)
+config = configparser.ConfigParser()
+config.read("mq_config.ini")
 
 
 class Consumer():
-    EXCHANGE_NAME = getattr(settings, "EXCHANGE_NAME", "default")
-    EXCHANGE_TYPE = getattr(settings, "EXCHANGE_TYPE", "direct")
-    QUEUE_NAME = getattr(settings, "QUEUE_NAME", "default")
-    ROUTING_KEY = getattr(settings, "QUEUE_NAME", "default")
-    VIRTUAL_HOST = getattr(settings, "VIRTUAL_HOST", "test")
+    HOST = config.get("host", "localhost")
+    PORT = config.getint("port", 5672)
 
-    USERNAME = getattr(settings, "USERNAME", None)
-    PASSWORD = getattr(settings, "PASSWORD", None)
-    HOST = getattr(settings, "HOST", None)
-    PORT = getattr(settings, "PORT", 5672)
+    USERNAME = config.get("username")
+    PASSWORD = config.get("password")
+
+    VIRTUAL_HOST = config.get("vhost")
+
+    EXCHANGE_NAME = config.get("exchange_name")
+    EXCHANGE_TYPE = config.get("exchange_type")
+
+    QUEUE_NAME = config.get("queue_name")
+    ROUTING_KEY = config.get("routing_key")
 
     def __init__(self, event=None, process_func=None):
         credentials = pika.PlainCredentials(username=self.USERNAME,
@@ -40,10 +45,12 @@ class Consumer():
         if self._connection:
             self._connection.connect()
         else:
-            self._connection = pika.SelectConnection(parameters=self._conn_params,
-                                                     on_open_callback=self.on_connection_open,
-                                                     on_close_callback=self.on_connection_closed,
-                                                     stop_ioloop_on_close=False)
+            self._connection = pika.SelectConnection(
+                parameters=self._conn_params,
+                on_open_callback=self.on_connection_open,
+                on_close_callback=self.on_connection_closed,
+                stop_ioloop_on_close=False
+            )
         return self._connection
 
     def on_connection_open(self, unused_connection):
@@ -97,8 +104,10 @@ class Consumer():
 
     def start_consuming(self):
         logger.info('Issuing consumer related RPC commands')
-        self._consumer_tag = self._channel.basic_consume(consumer_callback=self.on_message,
-                                                         queue=self.QUEUE_NAME)
+        self._consumer_tag = self._channel.basic_consume(
+            consumer_callback=self.on_message,
+            queue=self.QUEUE_NAME
+        )
 
     def on_message(self, unused_channel, basic_deliver, properties, body):
         logger.info('Received message # {} from {}: {}'.format(
@@ -126,14 +135,3 @@ def async_start_consume(f=None):
 def start_consume(f=None):
     consumer = Consumer(process_func=f)
     consumer.run()
-
-
-def main():
-    async_start_consume()
-
-
-if __name__ == "__main__":
-    LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
-                                '-35s %(lineno) -5d: %(message)s')
-    logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
-    main()
