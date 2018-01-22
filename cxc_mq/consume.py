@@ -141,6 +141,6 @@ def async_start_consume(config=None, f=None):
     t.start()
 
 
-def start_consume(conefig, f):
+def start_consume(config, f):
     consumer = Consumer(config, process_func=f)
     consumer.run()
