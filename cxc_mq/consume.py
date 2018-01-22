@@ -1,7 +1,6 @@
 import pika
 import logging
 import threading
-import configparser
 
 logger = logging.getLogger(__name__)
 
