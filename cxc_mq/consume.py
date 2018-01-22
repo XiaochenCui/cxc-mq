@@ -135,12 +135,12 @@ class Consumer():
         self._connection.ioloop.start()
 
 
-def async_start_consume(f=None):
-    t = threading.Thread(target=start_consume, args=(f, ))
+def async_start_consume(config=None, f=None):
+    t = threading.Thread(target=start_consume, args=(config, f, ))
     t.daemon = True
     t.start()
 
 
-def start_consume(f=None):
-    consumer = Consumer(process_func=f)
+def start_consume(conefig, f):
+    consumer = Consumer(config, process_func=f)
     consumer.run()
