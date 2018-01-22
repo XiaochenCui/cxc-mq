@@ -32,6 +32,6 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3 :: Only',
     ],
-    install_requires=['pika'],
+    install_requires=['pika', 'cxc_toolkit'],
     packages=find_packages(exclude=['test']),
 )
