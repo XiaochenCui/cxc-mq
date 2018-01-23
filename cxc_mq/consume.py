@@ -2,10 +2,12 @@ import pika
 import logging
 import threading
 
+from cxc_mq.mixins import InitiateConfigMixin
+
 logger = logging.getLogger(__name__)
 
 
-class Consumer():
+class Consumer(InitiateConfigMixin):
     def __init__(self, config=None, process_func=None):
         """
         Initiate consumer, establish connection
@@ -33,21 +35,6 @@ class Consumer():
         self._closing = False
         self._consumer_tag = None
         self._conn_params = conn_params
-
-    def init_config(self, config):
-        self.HOST = config.get("host", "localhost")
-        self.PORT = config.getint("port", 5672)
-
-        self.USERNAME = config.get("username")
-        self.PASSWORD = config.get("password")
-
-        self.VIRTUAL_HOST = config.get("vhost")
-
-        self.EXCHANGE_NAME = config.get("exchange_name")
-        self.EXCHANGE_TYPE = config.get("exchange_type")
-
-        self.QUEUE_NAME = config.get("queue_name")
-        self.ROUTING_KEY = config.get("routing_key")
 
     def connect(self):
         logger.info("Connecting to {}".format(self._conn_params.host))

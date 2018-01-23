@@ -1,34 +1,20 @@
 import pika
 import logging
 import threading
-import configparser
 
 from cxc_toolkit.patterns.singleton import SingletonMixin
 
+from cxc_mq.mixins import InitiateConfigMixin
+
 logger = logging.getLogger(__name__)
-config = configparser.ConfigParser()
-config.read("mq_config.ini")
-config = config["main"]
 
 
-class Publisher(SingletonMixin):
-    HOST = config.get("host", "localhost")
-    PORT = config.getint("port", 5672)
+class Publisher(SingletonMixin, InitiateConfigMixin):
+    def __init__(self, config=None, event=None):
+        self.init_config(config)
 
-    USERNAME = config.get("username")
-    PASSWORD = config.get("password")
+        self.PUBLISH_INTERVAL = config.get("publish_interval", 1)
 
-    VIRTUAL_HOST = config.get("vhost")
-
-    EXCHANGE_NAME = config.get("exchange_name")
-    EXCHANGE_TYPE = config.get("exchange_type")
-
-    QUEUE_NAME = config.get("queue_name")
-    ROUTING_KEY = config.get("routing_key")
-
-    PUBLISH_INTERVAL = config.get("publish_interval", 1)
-
-    def __init__(self, event=None):
         credentials = pika.PlainCredentials(username=self.USERNAME,
                                             password=self.PASSWORD)
         conn_params = pika.ConnectionParameters(host=self.HOST,
