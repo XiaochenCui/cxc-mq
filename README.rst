@@ -10,6 +10,9 @@ cxc-mq
 .. image:: https://img.shields.io/travis/XiaochenCui/cxc-mq.svg
     :target: https://travis-ci.org/XiaochenCui/cxc-mq
 
+.. image:: https://codecov.io/gh/XiaochenCui/cxc-mq/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/XiaochenCui/cxc-mq
+
 Installation
 ------------
 
