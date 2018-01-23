@@ -121,5 +121,5 @@ def publish(message, event):
 
 def main():
     async_build_connection()
-    async_publish_message("Hi! I"m a message for test.")
-    async_publish_message("Hi! I"m another message for test.")
+    async_publish_message("Hi! I'm a message for test.")
+    async_publish_message("Hi! I'm another message for test.")
