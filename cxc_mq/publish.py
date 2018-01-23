@@ -37,7 +37,7 @@ class Publisher(SingletonMixin, InitiateConfigMixin):
         self._closing = False
 
     def connect(self):
-        logger.info('Connecting to %s', self._conn_params.host)
+        logger.info("Connecting to %s", self._conn_params.host)
         if self._connection:
             self._connection.connect()
         else:
@@ -49,11 +49,11 @@ class Publisher(SingletonMixin, InitiateConfigMixin):
         return self._connection
 
     def on_connection_open(self, unused_connection):
-        logger.info('Connection opened')
+        logger.info("Connection opened")
         self.open_channel()
 
     def on_connection_closed(self, connection, reply_code, reply_text):
-        logger.warning('Connection closed, reopening in 1 seconds: (%s) %s',
+        logger.warning("Connection closed, reopening in 1 seconds: (%s) %s",
                        reply_code, reply_text)
         self._connection.add_timeout(1, self.reconnect)
 
@@ -61,16 +61,16 @@ class Publisher(SingletonMixin, InitiateConfigMixin):
         self.connect()
 
     def open_channel(self):
-        logger.info('Creating a new channel')
+        logger.info("Creating a new channel")
         self._connection.channel(on_open_callback=self.on_channel_open)
 
     def on_channel_open(self, channel):
-        logger.info('Channel opened')
+        logger.info("Channel opened")
         self._channel = channel
         self.setup_exchange(self.EXCHANGE_NAME)
 
     def setup_exchange(self, exchange_name):
-        logger.info('Declaring exchange%s', exchange_name)
+        logger.info("Declaring exchange {}".format(exchange_name))
         self._channel.exchange_declare(exchange=exchange_name,
                                        exchange_type=self.EXCHANGE_TYPE,
                                        passive=False,
@@ -121,5 +121,5 @@ def publish(message, event):
 
 def main():
     async_build_connection()
-    async_publish_message("Hi! I'm a message for test.")
-    async_publish_message("Hi! I'm another message for test.")
+    async_publish_message("Hi! I"m a message for test.")
+    async_publish_message("Hi! I"m another message for test.")

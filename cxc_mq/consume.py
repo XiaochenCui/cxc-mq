@@ -77,7 +77,7 @@ class Consumer(InitiateConfigMixin):
                                        auto_delete=False)
 
     def on_exchange_declareok(self, unused_frame):
-        logger.info("Exchange declared")
+        logger.info("Exchange declared: {}".format(self.EXCHANGE_NAME))
         self.setup_queue(self.QUEUE_NAME)
 
     def setup_queue(self, queue_name):
