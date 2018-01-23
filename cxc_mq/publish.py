@@ -96,14 +96,14 @@ class Publisher(SingletonMixin, InitiateConfigMixin):
 default_event = threading.Event()
 
 
-def async_build_connection(event=default_event):
-    t = threading.Thread(target=build_connection, args=(event,))
+def async_build_connection(config=None, event=default_event):
+    t = threading.Thread(target=build_connection, args=(config, event))
     t.daemon = True
     t.start()
 
 
-def build_connection(event):
-    publisher = Publisher.instance(event=event)
+def build_connection(config, event):
+    publisher = Publisher.instance(config=config, event=event)
     publisher.run()
 
 
